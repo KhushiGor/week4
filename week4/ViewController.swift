@@ -9,8 +9,8 @@ import UIKit
 
 class ViewController: UIViewController , UIPickerViewDelegate , UIPickerViewDataSource , UITableViewDelegate, UITableViewDataSource {
     
-    
-   
+    var years = ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
+    var selectedYearIndex = 0
    var semesters = ["Fall", "Winter", "Summer"]
     var selectedSemesterIndex = 0
     @IBOutlet weak var stdNameText: UITextField!
@@ -30,7 +30,7 @@ class ViewController: UIViewController , UIPickerViewDelegate , UIPickerViewData
         if let goodtext = stdNameText.text , let goodprogram = programText.text {
             if !goodtext.isEmpty, !goodprogram.isEmpty {
                 
-                var newStd = StudentModel(fullname: goodtext, program: goodprogram, semester: semesters[selectedSemesterIndex])
+                var newStd = StudentModel(fullname: goodtext, program: goodprogram, semester: semesters[selectedSemesterIndex], year: years[selectedYearIndex])
                 print(newStd.toString())
                 (UIApplication.shared.delegate as! AppDelegate).allStudents.append(newStd)
                 stdarray = (UIApplication.shared.delegate as! AppDelegate).allStudents
@@ -47,14 +47,19 @@ class ViewController: UIViewController , UIPickerViewDelegate , UIPickerViewData
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return semesters.count
+        if pickerView.tag == 0{
+            return semesters.count}
+        else {return years.count}
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return semesters[row]
+        if pickerView.tag == 0 {return semesters[row]}
+        else {return years[row]}
+        
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        selectedSemesterIndex = row
+        if pickerView.tag == 0 { selectedSemesterIndex = row }
+        else {selectedYearIndex = row}
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -68,7 +73,7 @@ class ViewController: UIViewController , UIPickerViewDelegate , UIPickerViewData
         var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
         var stdIndex = indexPath.row
         cell?.textLabel?.text = "\(stdarray[stdIndex].fullname) - \(stdarray[stdIndex].program)"
-        cell?.detailTextLabel?.text = "\(stdarray[stdIndex].semester)"
+        cell?.detailTextLabel?.text = "\(stdarray[stdIndex].semester) - \(stdarray[stdIndex].year)"
         return cell!
     }
     
